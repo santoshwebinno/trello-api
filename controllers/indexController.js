@@ -789,7 +789,7 @@ module.exports = {
 
             await screenshot({ filename: savePath });
 
-            const fileUrl = `http://localhost:4321/uploads/${result}`;
+            const fileUrl = `https://trello-api-1-5kri.onrender.com/uploads/${result}`;
 
             const data = await Screenshots.create({
                 c_id,
