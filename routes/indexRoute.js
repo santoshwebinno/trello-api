@@ -9,6 +9,7 @@ router.post("/sign-up", IndexController.signUp)
 router.post("/log-in", IndexController.logIn)
 router.post("/log-out", requireAuthentication, IndexController.logOut)
 router.get("/get-user-login-details", requireAuthentication, IndexController.getUserLoginDetails)
+router.get("/get-all-users", requireAuthentication, IndexController.getAllUsers)
 
 router.post("/create-board", requireAuthentication, IndexController.createBoard)
 router.get("/get-boards", requireAuthentication, IndexController.getBoards)
@@ -49,7 +50,6 @@ router.get("/get-card-joined-user", requireAuthentication, IndexController.getCa
 router.post("/add-remove-user", requireAuthentication, checkPermission, IndexController.handleAddRemoveUserOnCard)
 router.get("/get-all-users-joined-card", requireAuthentication, IndexController.getAllUsersJoinedCard)
 
-// router.get("/get-all-users", requireAuthentication, IndexController.getAllUsers)
 // router.post("/file-upload", IndexController.fileUpload)
 // router.post("/min-max", requireAuthentication, IndexController.minMaxDashbordCard)
 // router.post("/collaborator-access", requireAuthentication, IndexController.collaboratorAccess)

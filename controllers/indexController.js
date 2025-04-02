@@ -109,7 +109,7 @@ module.exports = {
                     logout_time: null
                 }
             })
-            if(!!exist_login){
+            if (!!exist_login) {
                 exist_login.logout_time = exist_login.login_time
                 exist_login.session_duration = (exist_login.logout_time - exist_login.login_time) / 1000;
                 exist_login.save();
@@ -179,6 +179,17 @@ module.exports = {
             return helper.success(res, 'Geting user login details successfully', existing_details);
         } catch (error) {
             return helper.error(res, "Network error");
+        }
+    },
+
+    getAllUsers: async (req, res) => {
+        try {
+            let data = await User.findAll({
+                attributes: ["id", "name", "email"]
+            })
+            return helper.success(res, "All users getting successfully", data);
+        } catch (err) {
+            return helper.error(res, err)
         }
     },
 
@@ -462,7 +473,7 @@ module.exports = {
         try {
             const { c_id, description } = req.body;
 
-            if (!c_id || !description) {
+            if (!c_id) {
                 return helper.error(res, "Required field missing")
             }
             const data = await ChildCard.findOne({
@@ -542,7 +553,6 @@ module.exports = {
 
     inviteCollaborator: async (req, res) => {
         const { id, name } = req.user;
-        // const { board_id, collaborator_email } = req.body;
         const { board_id } = req.query;
         const { collaborator_email } = req.body;
 
@@ -596,6 +606,7 @@ module.exports = {
             check_exist.save();
             let message = `${name} resend you a colleborator request for board ${board.title}`
             let notification = await helper.sendNotification(id, co_id, board_id, message, invitation = true)
+            notification = { ...notification.toJSON(), name: name}
             return helper.success(res, "Invite resend successfully", notification)
         }
 
@@ -606,6 +617,7 @@ module.exports = {
 
         let message = `${name} send you a colleborator request for board ${board.title}`
         let notification = await helper.sendNotification(id, co_id, board_id, message, invitation = true)
+        notification = { ...notification.toJSON(), name: name}
         return helper.success(res, `Invite send successfully`, notification)
     },
 
@@ -649,6 +661,7 @@ module.exports = {
 
         let message = `${name} accepted your invite for board ${board.title}`
         let notification = await helper.sendNotification(id, board.user_id, board_id, message)
+        notification = { ...notification.toJSON(), name: name}
         let data = {
             notification,
             board
@@ -696,6 +709,7 @@ module.exports = {
 
         let message = `${name} rejected your invite for board ${board.title}`
         let notification = await helper.sendNotification(id, board.user_id, board_id, message)
+        notification = { ...notification.toJSON(), name: name}
         return helper.success(res, `Request rejected`, notification)
     },
 
@@ -1092,17 +1106,6 @@ module.exports = {
 
 
     // NOT IN USE
-    getAllUsers: async (req, res) => {
-        try {
-            let data = await User.findAll({
-                attributes: ["id", "name", "email"]
-            })
-            return helper.success(res, "All users getting successfully", data);
-        } catch (err) {
-            return helper.error(res, err)
-        }
-    },
-
     fileUpload: async (req, res) => {
         try {
             const attatchment = req.files.file;
