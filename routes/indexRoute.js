@@ -49,6 +49,7 @@ router.get("/get-card-joined-user", requireAuthentication, IndexController.getCa
 
 router.post("/add-remove-user", requireAuthentication, checkPermission, IndexController.handleAddRemoveUserOnCard)
 router.get("/get-all-users-joined-card", requireAuthentication, IndexController.getAllUsersJoinedCard)
+router.post("/send-message-on-card", requireAuthentication, IndexController.sendMessageOnCard)
 
 // router.post("/file-upload", IndexController.fileUpload)
 // router.post("/min-max", requireAuthentication, IndexController.minMaxDashbordCard)

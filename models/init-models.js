@@ -1,12 +1,12 @@
 var DataTypes = require("sequelize").DataTypes;
-var _user_login_details = require("./user_login_details");
+var _card_messages = require("./card_messages");
 
 function initModels(sequelize) {
-  var user_login_details = _user_login_details(sequelize, DataTypes);
+  var card_messages = _card_messages(sequelize, DataTypes);
 
 
   return {
-    user_login_details,
+    card_messages,
   };
 }
 module.exports = initModels;

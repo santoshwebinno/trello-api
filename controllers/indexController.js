@@ -21,6 +21,7 @@ const ChatRoom = db.chat_room;
 const MessageRoom = db.message_room;
 const JoinedCardUser = db.joined_card_users;
 const UserLoginDetails = db.user_login_details;
+const CardMessages = db.card_messages;
 
 Board.hasMany(DashbordCard, { foreignKey: "board_id" })
 DashbordCard.hasMany(ChildCard, { foreignKey: "dashbord_c_id" })
@@ -34,6 +35,7 @@ Board.belongsToMany(User, { through: Collaborator, foreignKey: "board_id", other
 ChatRoom.hasMany(GroupUsers, { foreignKey: "chat_room_id" })
 
 ChildCard.hasMany(JoinedCardUser, { foreignKey: 'c_id' });
+ChildCard.hasMany(CardMessages, { foreignKey: 'c_id' });
 
 module.exports = {
     signUp: async (req, res) => {
@@ -427,6 +429,11 @@ module.exports = {
                             separate: true,
                             order: [['id', 'DESC']],
                         },
+                        {
+                            model: CardMessages,
+                            separate: true,
+                            order: [['id', 'DESC']],
+                        }
                     ]
                 }
             )
@@ -606,7 +613,7 @@ module.exports = {
             check_exist.save();
             let message = `${name} resend you a colleborator request for board ${board.title}`
             let notification = await helper.sendNotification(id, co_id, board_id, message, invitation = true)
-            notification = { ...notification.toJSON(), name: name}
+            notification = { ...notification.toJSON(), name: name }
             return helper.success(res, "Invite resend successfully", notification)
         }
 
@@ -617,7 +624,7 @@ module.exports = {
 
         let message = `${name} send you a colleborator request for board ${board.title}`
         let notification = await helper.sendNotification(id, co_id, board_id, message, invitation = true)
-        notification = { ...notification.toJSON(), name: name}
+        notification = { ...notification.toJSON(), name: name }
         return helper.success(res, `Invite send successfully`, notification)
     },
 
@@ -661,7 +668,7 @@ module.exports = {
 
         let message = `${name} accepted your invite for board ${board.title}`
         let notification = await helper.sendNotification(id, board.user_id, board_id, message)
-        notification = { ...notification.toJSON(), name: name}
+        notification = { ...notification.toJSON(), name: name }
         let data = {
             notification,
             board
@@ -709,7 +716,7 @@ module.exports = {
 
         let message = `${name} rejected your invite for board ${board.title}`
         let notification = await helper.sendNotification(id, board.user_id, board_id, message)
-        notification = { ...notification.toJSON(), name: name}
+        notification = { ...notification.toJSON(), name: name }
         return helper.success(res, `Request rejected`, notification)
     },
 
@@ -1104,6 +1111,33 @@ module.exports = {
         }
     },
 
+    sendMessageOnCard: async (req, res) => {
+        try {
+            const { id, name } = req.user;
+            const { c_id, message } = req.body;
+            if (!c_id || !message) {
+                return helper.error(res, "Required field missing")
+            }
+
+            const check_existing_card = await ChildCard.findOne({
+                where: { id: c_id }
+            })
+            if (!check_existing_card) {
+                return helper.error(res, "Card not found")
+            }
+
+            const data = await CardMessages.create({
+                c_id,
+                user_id: id,
+                user_name: name,
+                message
+            })
+
+            return helper.success(res, "Message send successfully", data);
+        } catch (err) {
+            return helper.error(res, err)
+        }
+    },
 
     // NOT IN USE
     fileUpload: async (req, res) => {
