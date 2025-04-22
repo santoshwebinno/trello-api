@@ -12,7 +12,7 @@ const server = require("http").createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "https://trello-test-1.netlify.app",
+        origin: "https://trello-test-1.netlify.app", // https://trello-test-1.netlify.app
         methods: ["GET", "POST"],
     },
 });
@@ -22,19 +22,20 @@ io.on("connection", (socket) => {
 
     socket.on("join_chat", (chat_id) => {
         socket.join(chat_id);
-        // console.log(`+++++ User with ID : ${socket.id} joined chat: ${chat_id} +++++`);
     });
 
     socket.on("send_message", (data) => {
         // io.in(data.chat_room_id).emit("receive_message", data);
         io.to(data.chat_room_id).emit("receive_message", data);
-        // console.log("+++++ data send_message +++++", data)
     });
 
     socket.on("send_notification", (data) => {
-        // console.log("Received notification data : ========================================", data);
         io.emit("receive_notification", data);
     });
+
+    socket.on("send_message_on_card", (data) => {
+        io.emit("receive_message_on_card", data);
+    })
 
     socket.on("disconnect", () => {
         console.log("+++++ User Disconnected +++++ ", socket.id);

@@ -17,7 +17,7 @@ router.get("/display-board", requireAuthentication, IndexController.displayBoard
 router.post("/close-board", requireAuthentication, checkPermission, IndexController.closeBoard)
 
 router.post("/create-dashbord-card", requireAuthentication, IndexController.createDashbordCard) // checkPermission
-router.get("/display-dashbord-card", requireAuthentication, IndexController.displayDashbordCard)
+// router.get("/display-dashbord-card", requireAuthentication, IndexController.displayDashbordCard)
 router.post("/update-dashbord-card", requireAuthentication, IndexController.updateDashbordCard) // checkPermission
 
 router.post("/create-child-card", requireAuthentication, IndexController.createChildCard)
